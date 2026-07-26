@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airis — Mochilas tejidas a mano y artesanías</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #F7F1E6;
+    --beige: #EAE0CC;
+    --beige-deep: #DCCBA8;
+    --gold: #B8925A;
+    --gold-soft: #D8B778;
+    --blush: #F1E2D8;
+    --ink: #4A3B2A;
+    --ink-soft: #7A6A54;
+    --ring-shadow: rgba(74,59,42,0.14);
+    --glass-fill: rgba(255,252,246,0.38);
+    --glass-fill-soft: rgba(255,252,246,0.22);
+    --glass-border: rgba(255,255,255,0.55);
+    --glass-shadow: rgba(120,95,55,0.16);
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Jost', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ---------- Liquid glass core ---------- */
+  .glass{
+    position:relative;
+    background:var(--glass-fill);
+    backdrop-filter:blur(20px) saturate(160%);
+    -webkit-backdrop-filter:blur(20px) saturate(160%);
+    border:1px solid var(--glass-border);
+    box-shadow:
+      0 8px 32px var(--glass-shadow),
+      inset 0 1px 0 rgba(255,255,255,0.6),
+      inset 0 -1px 0 rgba(184,146,90,0.08);
+  }
+  /* specular sweep that drifts across every glass surface */
+  .glass::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    background:linear-gradient(115deg,
+      rgba(255,255,255,0) 30%,
+      rgba(255,255,255,0.45) 45%,
+      rgba(255,255,255,0) 60%);
+    background-size:220% 220%;
+    background-position:120% -20%;
+    opacity:0;
+    transition:opacity .5s ease;
+    pointer-events:none;
+  }
+  .glass:hover::before{
+    opacity:1;
+    animation:sheenSweep 1.4s ease forwards;
+  }
+  @keyframes sheenSweep{
+    0%{ background-position:120% -20%; }
+    100%{ background-position:-20% 120%; }
+  }
+
+  /* ambient liquid blobs floating behind content */
+  .liquid-field{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(50px);
+    opacity:0.5;
+    mix-blend-mode:multiply;
+    animation:blobFloat 22s ease-in-out infinite;
+  }
+  .blob.b1{ width:420px; height:420px; top:-120px; left:-100px; background:radial-gradient(circle at 30% 30%, var(--gold-soft), transparent 70%); animation-duration:26s; }
+  .blob.b2{ width:340px; height:340px; top:40vh; right:-140px; background:radial-gradient(circle at 60% 40%, var(--blush), transparent 70%); animation-duration:32s; animation-delay:-6s; }
+  .blob.b3{ width:300px; height:300px; bottom:-80px; left:20vw; background:radial-gradient(circle at 50% 50%, var(--beige-deep), transparent 70%); animation-duration:28s; animation-delay:-12s; }
+
+  @keyframes blobFloat{
+    0%, 100%{ transform:translate(0,0) scale(1); }
+    33%{ transform:translate(30px,-40px) scale(1.08); }
+    66%{ transform:translate(-25px,25px) scale(0.95); }
+  }
+
+  h1,h2,h3, .display{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    letter-spacing:0.02em;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+
+  /* ---------- Ring chain motif (signature element) ---------- */
+  .ring-chain{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0;
+    margin:0 auto;
+  }
+  .ring-chain svg{ display:block; }
+
+  /* ---------- Nav ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:50;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:22px 6vw;
+    background:rgba(247,241,230,0.42);
+    backdrop-filter:blur(22px) saturate(160%);
+    -webkit-backdrop-filter:blur(22px) saturate(160%);
+    border-bottom:1px solid rgba(255,255,255,0.5);
+    box-shadow:0 4px 24px rgba(120,95,55,0.08);
+    transition:box-shadow .4s ease, background .4s ease;
+  }
+  header.scrolled{
+    background:rgba(247,241,230,0.65);
+    box-shadow:0 8px 30px rgba(120,95,55,0.14);
+  }
+  .logo{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.6rem;
+    font-style:italic;
+    color:var(--ink);
+    letter-spacing:0.03em;
+  }
+  nav a{
+    margin-left:2.2rem;
+    font-size:0.82rem;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    color:var(--ink-soft);
+    transition:color .2s ease;
+  }
+  nav a:hover{ color:var(--gold); }
+  .nav-links{ display:flex; align-items:center; }
+  @media (max-width:720px){
+    nav a{ margin-left:1.1rem; font-size:0.68rem; letter-spacing:0.08em; }
+    .logo{ font-size:1.3rem; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:120px 6vw 60px;
+    position:relative;
+  }
+  .hero-eyebrow{
+    font-size:0.78rem;
+    letter-spacing:0.32em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:1.4rem;
+  }
+  .hero h1{
+    font-size:clamp(3.2rem, 9vw, 6.4rem);
+    line-height:0.95;
+    color:var(--ink);
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--gold);
+  }
+  .hero p.sub{
+    max-width:480px;
+    margin:1.6rem auto 2.4rem;
+    font-size:1.05rem;
+    color:var(--ink-soft);
+    line-height:1.7;
+  }
+  .cta-row{
+    display:flex;
+    gap:1rem;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .btn{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:0.55rem;
+    padding:0.95rem 2.1rem;
+    border-radius:999px;
+    font-size:0.86rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    overflow:hidden;
+    isolation:isolate;
+    transition:transform .3s cubic-bezier(.22,.9,.35,1.1), box-shadow .3s ease;
+  }
+  .btn::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle 120px at var(--mx,50%) var(--my,50%),
+      rgba(255,255,255,0.55), transparent 60%);
+    opacity:0;
+    transition:opacity .35s ease;
+    z-index:1;
+    pointer-events:none;
+  }
+  .btn:hover::before{ opacity:1; }
+  .btn span, .btn{ z-index:2; }
+  .btn-primary{
+    background:linear-gradient(160deg, var(--gold-soft), var(--gold));
+    color:var(--cream);
+    box-shadow:0 8px 24px rgba(184,146,90,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .btn-primary:hover{ transform:translateY(-3px) scale(1.015); box-shadow:0 14px 30px rgba(184,146,90,0.48), inset 0 1px 0 rgba(255,255,255,0.5); }
+  .btn-primary:active{ transform:translateY(-1px) scale(0.98); }
+  .btn-outline{
+    background:var(--glass-fill-soft);
+    backdrop-filter:blur(14px) saturate(140%);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    border:1px solid var(--glass-border);
+    color:var(--ink);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .btn-outline:hover{ background:rgba(241,226,216,0.55); transform:translateY(-3px); box-shadow:0 10px 22px rgba(184,146,90,0.2), inset 0 1px 0 rgba(255,255,255,0.6); }
+
+  .hero-ring{ margin-top:3.4rem; opacity:0.9; }
+
+  /* ---------- Section shared ---------- */
+  section{ padding:110px 6vw; position:relative; }
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 3.6rem; }
+  .eyebrow{
+    font-size:0.75rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:block;
+    margin-bottom:0.9rem;
+  }
+  .section-head h2{
+    font-size:clamp(2.2rem, 4.5vw, 3.2rem);
+    color:var(--ink);
+  }
+  .section-head p{
+    margin-top:1rem;
+    color:var(--ink-soft);
+    line-height:1.7;
+  }
+
+  /* ---------- Historia ---------- */
+  .story{
+    background:var(--beige);
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:4rem;
+    align-items:center;
+    border-radius:2px;
+  }
+  .story-visual{
+    aspect-ratio:4/5;
+    background:linear-gradient(160deg, var(--blush), var(--beige-deep));
+    border-radius:6px 60px 6px 60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+    backdrop-filter:blur(2px);
+  }
+  .story-visual::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 30%);
+    mix-blend-mode:overlay;
+    pointer-events:none;
+  }
+  .story-visual .placeholder-tag{
+    position:absolute;
+    bottom:1.2rem;
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    background:rgba(247,241,230,0.75);
+    padding:0.4rem 0.9rem;
+    border-radius:999px;
+  }
+  .story-text h3{
+    font-size:2rem;
+    margin-bottom:1.1rem;
+    color:var(--ink);
+  }
+  .story-text p{
+    color:var(--ink-soft);
+    line-height:1.85;
+    margin-bottom:1rem;
+    font-size:1.02rem;
+  }
+  .story-text .quote{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.35rem;
+    color:var(--gold);
+    margin-top:1.6rem;
+  }
+  @media (max-width:840px){
+    .story{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- Catalogo ---------- */
+  .catalog-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:2rem;
+  }
+  @media (max-width:900px){ .catalog-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:600px){ .catalog-grid{ grid-template-columns:1fr; } }
+
+  .card{
+    position:relative;
+    background:var(--glass-fill);
+    backdrop-filter:blur(16px) saturate(150%);
+    -webkit-backdrop-filter:blur(16px) saturate(150%);
+    border:1px solid var(--glass-border);
+    border-radius:4px 28px 4px 28px;
+    overflow:hidden;
+    isolation:isolate;
+    transition:transform .4s cubic-bezier(.22,.9,.35,1.1), box-shadow .4s ease;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    z-index:1;
+    background:radial-gradient(circle 220px at var(--mx,50%) var(--my,50%),
+      rgba(255,255,255,0.5), transparent 65%);
+    opacity:0;
+    transition:opacity .4s ease;
+    pointer-events:none;
+  }
+  .card:hover::before{ opacity:1; }
+  .card:hover{ transform:translateY(-8px) scale(1.01); box-shadow:0 20px 36px var(--ring-shadow), inset 0 1px 0 rgba(255,255,255,0.5); }
+  .card-visual{
+    aspect-ratio:1/1;
+    background:linear-gradient(150deg, var(--beige), var(--blush));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+  .card-visual span.tag{
+    font-size:0.62rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    position:absolute;
+    top:0.9rem; left:0.9rem;
+    background:rgba(247,241,230,0.8);
+    padding:0.3rem 0.7rem;
+    border-radius:999px;
+  }
+  .card-body{ padding:1.5rem 1.5rem 1.8rem; }
+  .card-body h4{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.5rem;
+    color:var(--ink);
+    margin-bottom:0.4rem;
+  }
+  .card-body p{
+    font-size:0.9rem;
+    color:var(--ink-soft);
+    line-height:1.6;
+    margin-bottom:1rem;
+  }
+  .card-body .price{
+    font-size:0.82rem;
+    letter-spacing:0.06em;
+    color:var(--gold);
+    text-transform:uppercase;
+  }
+  .card-link{
+    display:inline-block;
+    margin-top:0.9rem;
+    font-size:0.78rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink);
+    border-bottom:1px solid var(--gold);
+    padding-bottom:2px;
+  }
+
+  /* ---------- Artesanias strip ---------- */
+  .strip{
+    background:var(--ink);
+    color:var(--cream);
+    text-align:center;
+  }
+  .strip .section-head p{ color:rgba(247,241,230,0.75); }
+  .strip .eyebrow{ color:var(--gold-soft); }
+  .strip .btn-outline{
+    border-color:var(--gold-soft);
+    color:var(--cream);
+  }
+  .strip .btn-outline:hover{ background:rgba(216,183,120,0.14); }
+
+  /* ---------- Proceso ---------- */
+  .process{
+    display:flex;
+    justify-content:space-between;
+    gap:2rem;
+    flex-wrap:wrap;
+  }
+  .process-step{
+    flex:1;
+    min-width:200px;
+    text-align:center;
+  }
+  .process-step .glyph{
+    width:64px; height:64px;
+    margin:0 auto 1.2rem;
+  }
+  .process-step h4{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.35rem;
+    margin-bottom:0.5rem;
+  }
+  .process-step p{
+    font-size:0.9rem;
+    color:var(--ink-soft);
+    line-height:1.6;
+  }
+
+  /* ---------- Contacto ---------- */
+  .contact{
+    background:var(--glass-fill);
+    backdrop-filter:blur(20px) saturate(150%);
+    -webkit-backdrop-filter:blur(20px) saturate(150%);
+    border:1px solid var(--glass-border);
+    text-align:center;
+    border-radius:28px;
+    box-shadow:0 12px 36px var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .contact h2{ font-size:clamp(2.2rem,5vw,3.4rem); margin-bottom:1rem; }
+  .contact p{ color:var(--ink-soft); max-width:460px; margin:0 auto 2.2rem; line-height:1.7; }
+  .contact-details{
+    display:flex;
+    justify-content:center;
+    gap:2.5rem;
+    flex-wrap:wrap;
+    margin-top:2.6rem;
+  }
+  .contact-item{ text-align:center; }
+  .contact-item .label{
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+    display:block;
+    margin-bottom:0.4rem;
+  }
+  .contact-item .value{ font-size:1.05rem; color:var(--ink); }
+
+  footer{
+    text-align:center;
+    padding:2.4rem 6vw 2.8rem;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    letter-spacing:0.04em;
+  }
+  footer .logo-foot{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.1rem;
+    color:var(--ink);
+    display:block;
+    margin-bottom:0.5rem;
+  }
+
+  /* ---------- Floating WhatsApp ---------- */
+  .wa-float{
+    position:fixed;
+    bottom:26px; right:26px;
+    z-index:60;
+    width:58px; height:58px;
+    border-radius:50%;
+    background:linear-gradient(160deg, var(--gold-soft), var(--gold));
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 10px 26px rgba(184,146,90,0.45), inset 0 1px 0 rgba(255,255,255,0.5);
+    transition:transform .35s cubic-bezier(.22,.9,.35,1.2), box-shadow .35s ease;
+    animation:float 4s ease-in-out infinite;
+  }
+  .wa-float:hover{ transform:scale(1.1); box-shadow:0 14px 32px rgba(184,146,90,0.55), inset 0 1px 0 rgba(255,255,255,0.6); }
+  @keyframes float{
+    0%, 100%{ transform:translateY(0); }
+    50%{ transform:translateY(-6px); }
+  }
+  .wa-float svg{ width:26px; height:26px; }
+
+  .reveal{
+    opacity:0;
+    filter:blur(10px);
+    transform:translateY(26px) scale(0.985);
+    transition:opacity .9s cubic-bezier(.2,.7,.3,1), filter .9s cubic-bezier(.2,.7,.3,1), transform .9s cubic-bezier(.2,.7,.3,1);
+  }
+  .reveal.in{ opacity:1; filter:blur(0); transform:translateY(0) scale(1); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+    .reveal{ opacity:1; filter:none; transform:none; }
+    .blob{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="liquid-field" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<header id="siteHeader">
+  <div class="logo">Airis</div>
+  <div class="nav-links">
+    <nav>
+      <a href="#historia">Historia</a>
+      <a href="#coleccion">Colección</a>
+      <a href="#artesanias">Artesanías</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <span class="hero-eyebrow">Tejido a mano · Edición limitada</span>
+  <h1>Airis</h1>
+  <p class="sub">Mochilas y artesanías tejidas a mano, hilo por hilo, por una madre y su abuela. Piezas únicas, hechas para durar y para acompañar.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://wa.me/573005563452?text=Hola%20Airis%2C%20quiero%20conocer%20m%C3%A1s%20sobre%20las%20mochilas%20tejidas" target="_blank" rel="noopener">
+      Escribir por WhatsApp
+    </a>
+    <a class="btn btn-outline" href="#coleccion">Ver colección</a>
+  </div>
+
+  <div class="hero-ring" id="heroRing"></div>
+</section>
+
+<!-- ================= HISTORIA ================= -->
+<section id="historia">
+  <div class="story reveal">
+    <div class="story-visual">
+      <div id="storySvg"></div>
+      <span class="placeholder-tag">Foto próximamente</span>
+    </div>
+    <div class="story-text">
+      <span class="eyebrow">Nuestra historia</span>
+      <h3>Dos generaciones, un mismo hilo</h3>
+      <p>Airis nace en casa, entre agujas, carretes de hilo y tardes de tejido compartidas entre una abuela y su nieta política. Lo que empezó como una tradición familiar hoy se convierte en mochilas y piezas artesanales para quienes valoran lo hecho a mano.</p>
+      <p>Cada mochila lleva horas de trabajo detallado: nudo por nudo, sin prisa, cuidando el acabado y la caída del hilo. No hay dos piezas exactamente iguales.</p>
+      <p class="quote">"Tejemos con las manos lo que queremos que dure en el tiempo."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COLECCION ================= -->
+<section id="coleccion">
+  <div class="section-head reveal">
+    <span class="eyebrow">Colección</span>
+    <h2>Mochilas tejidas a mano</h2>
+    <p>Diseños tipo balde con asa tejida en cadena de aritos, cierre de cordón y detalles en tonos champagne, dorado y beige.</p>
+  </div>
+  <div class="catalog-grid reveal">
+
+    <div class="card">
+      <div class="card-visual"><span class="tag">Champagne</span><div class="bag-svg" data-tone="champagne"></div></div>
+      <div class="card-body">
+        <h4>Mochila Champagne</h4>
+        <p>Hilo sedoso en tono champagne, cierre con cordón satinado y asa de aritos tejidos.</p>
+        <span class="price">Consultar precio</span><br>
+        <a class="card-link" href="https://wa.me/573005563452?text=Hola%2C%20me%20interesa%20la%20Mochila%20Champagne" target="_blank" rel="noopener">Pedir por WhatsApp →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-visual"><span class="tag">Cordón de seda</span><div class="bag-svg" data-tone="gold"></div></div>
+      <div class="card-body">
+        <h4>Mochila Cordón de Seda</h4>
+        <p>Tejido en hilo dorado con bolsa interior en satín y cordón de cierre a juego.</p>
+        <span class="price">Consultar precio</span><br>
+        <a class="card-link" href="https://wa.me/573005563452?text=Hola%2C%20me%20interesa%20la%20Mochila%20Cord%C3%B3n%20de%20Seda" target="_blank" rel="noopener">Pedir por WhatsApp →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-visual"><span class="tag">Cola de ratón</span><div class="bag-svg" data-tone="brown"></div></div>
+      <div class="card-body">
+        <h4>Mochila Hilo Cola de Ratón</h4>
+        <p>Tejido compacto en hilo cola de ratón, disponible en tonos crudo y marrón.</p>
+        <span class="price">Consultar precio</span><br>
+        <a class="card-link" href="https://wa.me/573005563452?text=Hola%2C%20me%20interesa%20la%20Mochila%20Hilo%20Cola%20de%20Rat%C3%B3n" target="_blank" rel="noopener">Pedir por WhatsApp →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= ARTESANIAS ================= -->
+<section id="artesanias" class="strip">
+  <div class="section-head reveal">
+    <span class="eyebrow">También tejemos</span>
+    <h2>Artesanías hechas a mano</h2>
+    <p>Además de las mochilas, hacemos piezas artesanales por encargo: llaveros, monederos, individuales y detalles decorativos en el mismo hilo y paleta de la colección.</p>
+    <div style="margin-top:2.2rem;">
+      <a class="btn btn-outline" href="https://wa.me/573005563452?text=Hola%2C%20quiero%20preguntar%20por%20artesan%C3%ADas%20personalizadas" target="_blank" rel="noopener">Preguntar por un encargo</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESO ================= -->
+<section>
+  <div class="section-head reveal">
+    <span class="eyebrow">Cómo comprar</span>
+    <h2>Un pedido, tres pasos</h2>
+  </div>
+  <div class="process reveal">
+    <div class="process-step">
+      <div class="glyph" data-glyph="1"></div>
+      <h4>Escríbenos</h4>
+      <p>Cuéntanos qué mochila o pieza te gustó por WhatsApp.</p>
+    </div>
+    <div class="process-step">
+      <div class="glyph" data-glyph="2"></div>
+      <h4>Confirmamos</h4>
+      <p>Te confirmamos color, tiempo de entrega y forma de envío.</p>
+    </div>
+    <div class="process-step">
+      <div class="glyph" data-glyph="3"></div>
+      <h4>Recibes tu pieza</h4>
+      <p>Tejemos y enviamos tu mochila o artesanía, lista para usar.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACTO ================= -->
+<section id="contacto">
+  <div class="contact reveal">
+    <h2>Hablemos</h2>
+    <p>Escríbenos para conocer disponibilidad, colores y tiempos de entrega.</p>
+    <a class="btn btn-primary" href="https://wa.me/573005563452?text=Hola%20Airis%2C%20quiero%20hacer%20un%20pedido" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    <div class="contact-details">
+      <div class="contact-item">
+        <span class="label">WhatsApp</span>
+        <span class="value">300 556 3452</span>
+      </div>
+      <div class="contact-item">
+        <span class="label">Ubicación</span>
+        <span class="value">Colombia · envíos a nivel nacional</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="logo-foot">Airis</span>
+  Tejido a mano · Piezas únicas · © <span id="year"></span>
+</footer>
+
+<a class="wa-float" href="https://wa.me/573005563452?text=Hola%20Airis" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.29.62 4.44 1.7 6.29L3 29l7.4-2.14a12.42 12.42 0 0 0 5.6 1.34h.001C22.895 28.2 28.5 22.593 28.5 15.7 28.5 8.807 22.895 3 16.001 3z" fill="#F7F1E6"/>
+    <path d="M21.3 18.1c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.48-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.14-.14.3-.35.45-.53.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.6-.92-2.19-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.87 1.22 3.07.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35z" fill="#4A3B2A"/>
+  </svg>
+</a>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// ---------- Ring chain generator (signature motif) ----------
+function ringChain(count, size, stroke, color, gap){
+  const w = count * (size - gap) + gap;
+  const h = size + stroke*2;
+  let svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+  for(let i=0;i<count;i++){
+    const cx = stroke + size/2 + i*(size-gap);
+    const cy = h/2;
+    svg += `<circle cx="${cx}" cy="${cy}" r="${(size-stroke)/2}" fill="none" stroke="${color}" stroke-width="${stroke}" opacity="${0.55 + (i%2)*0.25}"/>`;
+  }
+  svg += `</svg>`;
+  return svg;
+}
+document.getElementById('heroRing').innerHTML = ringChain(9, 34, 5, '#B8925A', 10);
+
+// story visual: soft bag silhouette
+document.getElementById('storySvg').innerHTML = `
+<svg width="180" height="220" viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 90 Q40 70 60 65 L120 65 Q140 70 140 90 L136 180 Q134 196 118 196 L62 196 Q46 196 44 180 Z"
+    fill="none" stroke="#B8925A" stroke-width="2.5" opacity="0.6"/>
+  <path d="M62 65 Q90 20 118 65" fill="none" stroke="#B8925A" stroke-width="2.5" opacity="0.5"/>
+  <path d="M78 40 L102 40 L98 55 L82 55 Z" fill="#D8B778" opacity="0.55"/>
+  <line x1="60" y1="105" x2="120" y2="105" stroke="#B8925A" stroke-width="1" opacity="0.3"/>
+  <line x1="58" y1="125" x2="122" y2="125" stroke="#B8925A" stroke-width="1" opacity="0.3"/>
+  <line x1="56" y1="145" x2="124" y2="145" stroke="#B8925A" stroke-width="1" opacity="0.3"/>
+  <line x1="54" y1="165" x2="126" y2="165" stroke="#B8925A" stroke-width="1" opacity="0.3"/>
+</svg>`;
+
+// card bag illustrations by tone
+const tones = {
+  champagne: '#E7CBB0',
+  gold: '#D8B778',
+  brown: '#A9825A'
+};
+document.querySelectorAll('.bag-svg').forEach(el=>{
+  const tone = tones[el.dataset.tone] || '#D8B778';
+  el.innerHTML = `
+  <svg width="120" height="140" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="60" cy="118" rx="34" ry="8" fill="#4A3B2A" opacity="0.06"/>
+    <path d="M28 55 Q28 42 44 40 L76 40 Q92 42 92 55 L88 108 Q86 118 74 118 L46 118 Q34 118 32 108 Z"
+      fill="${tone}" opacity="0.85"/>
+    <path d="M44 40 Q60 12 76 40" fill="none" stroke="#4A3B2A" stroke-width="2" opacity="0.35"/>
+    <path d="M50 24 L70 24 L66 36 L54 36 Z" fill="#F1E2D8" opacity="0.9"/>
+  </svg>`;
+});
+
+// process glyphs
+const glyphs = {
+  1: '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="#B8925A" stroke-width="2"/><path d="M22 30 Q32 40 42 30" fill="none" stroke="#B8925A" stroke-width="2"/></svg>',
+  2: '<svg viewBox="0 0 64 64"><path d="M18 32 L28 42 L46 22" fill="none" stroke="#B8925A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="32" r="26" fill="none" stroke="#B8925A" stroke-width="2"/></svg>',
+  3: '<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="#B8925A" stroke-width="2"/><path d="M24 34 Q32 24 40 34" fill="none" stroke="#B8925A" stroke-width="2"/><path d="M28 40 Q32 44 36 40" fill="none" stroke="#B8925A" stroke-width="2"/></svg>'
+};
+document.querySelectorAll('.glyph').forEach(el=>{
+  el.innerHTML = glyphs[el.dataset.glyph];
+});
+
+// scroll reveal
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); }
+  });
+}, {threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// header glass intensifies on scroll
+const header = document.getElementById('siteHeader');
+window.addEventListener('scroll', ()=>{
+  header.classList.toggle('scrolled', window.scrollY > 40);
+}, {passive:true});
+
+// cursor-tracked liquid sheen on glass cards & buttons
+const sheenTargets = document.querySelectorAll('.card, .btn');
+sheenTargets.forEach(el=>{
+  el.addEventListener('pointermove', (e)=>{
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
+</script>
+
+</body>
+</html>
