@@ -4,28 +4,53 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Airis — Mochilas tejidas a mano y artesanías</title>
+<link rel="icon" href="fotos/logop.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* ========================================
+     VARIABLES DE COLOR - PALETA VISUAL
+     ======================================== 
+     Cambiar estos colores afecta todo el sitio:
+     - --cream: Color de fondo principal (#F7F1E6 es beige claro)
+     - --beige: Fondo de secciones alternadas
+     - --beige-deep: Tonos más oscuros para contraste
+     - --gold / --gold-soft: Colores de acentos (botones, enlaces)
+     - --ink: Texto principal (café oscuro)
+     - --ink-soft: Texto secundario (más gris)
+     - Variables glass-* controlan la transparencia del efecto vidrio
+  */
   :root{
-    --cream: #F7F1E6;
-    --beige: #EAE0CC;
-    --beige-deep: #DCCBA8;
-    --gold: #B8925A;
-    --gold-soft: #D8B778;
-    --blush: #F1E2D8;
-    --ink: #4A3B2A;
-    --ink-soft: #7A6A54;
-    --ring-shadow: rgba(74,59,42,0.14);
-    --glass-fill: rgba(255,252,246,0.38);
-    --glass-fill-soft: rgba(255,252,246,0.22);
-    --glass-border: rgba(255,255,255,0.55);
-    --glass-shadow: rgba(120,95,55,0.16);
+    /* Tonos de fondo y base */
+    --cream: #F7F1E6;        /* Fondo principal - cambiar para tema oscuro */
+    --beige: #EAE0CC;        /* Fondos secundarios */
+    --beige-deep: #DCCBA8;   /* Sombras y contraste */
+    
+    /* Acentos y destacados */
+    --gold: #B8925A;         /* Color primario - aparece en botones, títulos */
+    --gold-soft: #D8B778;    /* Versión más clara del gold */
+    --blush: #F1E2D8;        /* Rosa suave para gradientes */
+    
+    /* Textos */
+    --ink: #4A3B2A;          /* Texto principal - muy oscuro */
+    --ink-soft: #7A6A54;     /* Texto secundario - menos contraste */
+    
+    /* Efectos especiales (no modificar normalmente) */
+    --ring-shadow: rgba(74,59,42,0.14);      /* Sombra suave en tarjetas */
+    --glass-fill: rgba(255,252,246,0.38);    /* Fondo del efecto vidrio/blur */
+    --glass-fill-soft: rgba(255,252,246,0.22); /* Versión más transparente */
+    --glass-border: rgba(255,255,255,0.55);   /* Borde del vidrio */
+    --glass-shadow: rgba(120,95,55,0.16);     /* Sombra del vidrio */
   }
 
   *{ box-sizing:border-box; margin:0; padding:0; }
   html{ scroll-behavior:smooth; }
 
+  /* CUERPO PRINCIPAL DE LA PÁGINA
+     - background: color de fondo (--cream = beige claro)
+     - overflow-x:hidden: evita scroll horizontal
+     - position:relative: necesario para posicionar elementos hijos
+  */
   body{
     background:var(--cream);
     color:var(--ink);
@@ -34,8 +59,39 @@
     overflow-x:hidden;
     position:relative;
   }
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:url("fotos/logop.png") center top / cover no-repeat;
+    opacity:0.16;
+    filter:blur(20px);
+    transform:scale(1.08);
+    pointer-events:none;
+    z-index:-1;
+  }
 
-  /* ---------- Liquid glass core ---------- */
+  .logo{
+    display:inline-flex;
+    align-items:center;
+    gap:0.75rem;
+  }
+  .logo .site-logo{
+    width:2rem;
+    height:auto;
+    display:block;
+    object-fit:contain;
+  }
+
+  /* ========================================
+     EFECTO VIDRIO (GLASS MORPHISM)
+     ======================================== 
+     Este es el efecto "frosted glass" que ves en:
+     - Tarjetas de productos
+     - Botones
+     - Sección de contacto
+     Crea un fondo semi-transparente con blur
+  */
   .glass{
     position:relative;
     background:var(--glass-fill);
@@ -47,7 +103,10 @@
       inset 0 1px 0 rgba(255,255,255,0.6),
       inset 0 -1px 0 rgba(184,146,90,0.08);
   }
-  /* specular sweep that drifts across every glass surface */
+  
+  /* Efecto de brillo que se desliza al pasar el mouse
+     Crea ese destello de luz que ves en tarjetas y botones
+  */
   .glass::before{
     content:'';
     position:absolute;
@@ -72,7 +131,23 @@
     100%{ background-position:-20% 120%; }
   }
 
-  /* ambient liquid blobs floating behind content */
+  /* ========================================
+     BLOBS ANIMADOS (Fondo flotante)
+     ======================================== 
+     Los blobs son formas circulares borrosas que flotan de fondo.
+     Crean un efecto líquido y moderno.
+     
+     - liquid-field: contenedor de los blobs
+     - .blob: cada forma individual
+     - animation:blobFloat: movimiento continuo en bucle
+     
+     Cada blob (b1, b2, b3) tiene:
+     - Diferentes tamaños
+     - Diferentes colores (gold, blush, beige)
+     - Diferentes duraciones de animación (26s, 32s, 28s)
+     
+     Para DESACTIVAR los blobs, cambia display:none en @media
+  */
   .liquid-field{
     position:fixed;
     inset:0;
@@ -106,17 +181,17 @@
 
   a{ color:inherit; text-decoration:none; }
 
-  /* ---------- Ring chain motif (signature element) ---------- */
-  .ring-chain{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:0;
-    margin:0 auto;
-  }
-  .ring-chain svg{ display:block; }
-
-  /* ---------- Nav ---------- */
+  /* ========================================
+     NAVEGACIÓN (HEADER)
+     ======================================== 
+     El header es sticky (fijo al top) con fondo blur.
+     Aparece en todos lados y tiene:
+     - Logo "Airis" a la izquierda
+     - Enlaces de navegación a la derecha
+     - Se vuelve más opaco al hacer scroll (clase .scrolled)
+     
+     padding: 22px 6vw = espaciado que se ajusta con pantalla
+  */
   header{
     position:fixed;
     top:0; left:0; right:0;
@@ -132,6 +207,7 @@
     box-shadow:0 4px 24px rgba(120,95,55,0.08);
     transition:box-shadow .4s ease, background .4s ease;
   }
+  /* Al hacer scroll (>40px), el header se vuelve más sólido */
   header.scrolled{
     background:rgba(247,241,230,0.65);
     box-shadow:0 8px 30px rgba(120,95,55,0.14);
@@ -143,6 +219,7 @@
     color:var(--ink);
     letter-spacing:0.03em;
   }
+  /* Enlaces de navegación */
   nav a{
     margin-left:2.2rem;
     font-size:0.82rem;
@@ -158,7 +235,18 @@
     .logo{ font-size:1.3rem; }
   }
 
-  /* ---------- Hero ---------- */
+  /* ========================================
+     SECCIÓN HERO (Portada principal)
+     ======================================== 
+     Es la primera sección grande que ves al abrir.
+     Ocupa al menos 100vh (altura de pantalla completa).
+     Tiene:
+     - Título grande "Airis"
+     - Descripción corta
+     - Dos botones principales (WhatsApp y Ver colección)
+     
+     min-height:100vh = mínimo ocupa pantalla completa
+  */
   .hero{
     min-height:100vh;
     display:flex;
@@ -192,12 +280,20 @@
     color:var(--ink-soft);
     line-height:1.7;
   }
+  /* Row de botones (alineados en fila) */
   .cta-row{
     display:flex;
     gap:1rem;
     flex-wrap:wrap;
     justify-content:center;
   }
+  
+  /* ========================================
+     BOTONES - Dos estilos diferentes
+     ======================================== 
+     .btn-primary: Botón dorado (CTA principal)
+     .btn-outline: Botón transparente con borde
+  */
   .btn{
     position:relative;
     display:inline-flex;
@@ -212,6 +308,7 @@
     isolation:isolate;
     transition:transform .3s cubic-bezier(.22,.9,.35,1.1), box-shadow .3s ease;
   }
+  /* Efecto de brillo en hover */
   .btn::before{
     content:'';
     position:absolute;
@@ -225,6 +322,8 @@
   }
   .btn:hover::before{ opacity:1; }
   .btn span, .btn{ z-index:2; }
+  
+  /* Botón PRIMARY - Dorado, relleno */
   .btn-primary{
     background:linear-gradient(160deg, var(--gold-soft), var(--gold));
     color:var(--cream);
@@ -232,6 +331,8 @@
   }
   .btn-primary:hover{ transform:translateY(-3px) scale(1.015); box-shadow:0 14px 30px rgba(184,146,90,0.48), inset 0 1px 0 rgba(255,255,255,0.5); }
   .btn-primary:active{ transform:translateY(-1px) scale(0.98); }
+  
+  /* Botón OUTLINE - Transparente con vidrio */
   .btn-outline{
     background:var(--glass-fill-soft);
     backdrop-filter:blur(14px) saturate(140%);
@@ -244,7 +345,12 @@
 
   .hero-ring{ margin-top:3.4rem; opacity:0.9; }
 
-  /* ---------- Section shared ---------- */
+  /* ========================================
+     SECCIONES GENERALES
+     ======================================== 
+     - section: Espaciado estándar (110px arriba y abajo)
+     - .section-head: Cabecera centrada con título y descripción
+  */
   section{ padding:110px 6vw; position:relative; }
   .section-head{ text-align:center; max-width:640px; margin:0 auto 3.6rem; }
   .eyebrow{
@@ -265,7 +371,16 @@
     line-height:1.7;
   }
 
-  /* ---------- Historia ---------- */
+  /* ========================================
+     SECCIÓN HISTORIA (Tu historia)
+     ======================================== 
+     Layout: Dos columnas
+     - Izquierda: Imagen/visual
+     - Derecha: Texto con descripción
+     
+     grid-template-columns: 0.9fr 1.1fr = izquierda más pequeña
+     @media: En móvil se convierte en 1 columna
+  */
   .story{
     background:var(--beige);
     display:grid;
@@ -278,12 +393,23 @@
     aspect-ratio:4/5;
     background:linear-gradient(160deg, var(--blush), var(--beige-deep));
     border-radius:6px 60px 6px 60px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     position:relative;
     overflow:hidden;
     backdrop-filter:blur(2px);
+  }
+  .story-visual img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .story-visual #storySvg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
   }
   .story-visual::after{
     content:'';
@@ -326,7 +452,18 @@
     .story{ grid-template-columns:1fr; }
   }
 
-  /* ---------- Catalogo ---------- */
+  /* ========================================
+     TARJETAS DE PRODUCTOS (Catálogo)
+     ======================================== 
+     .catalog-grid: Grilla de 3 columnas
+     Cada tarjeta tiene:
+     - Efecto vidrio (glass)
+     - Imagen de la mochila
+     - Nombre, descripción y precio
+     - Enlace WhatsApp para comprar
+     
+     @media ajusta a 2 columnas (tablet) o 1 (móvil)
+  */
   .catalog-grid{
     display:grid;
     grid-template-columns:repeat(3, 1fr);
@@ -335,6 +472,7 @@
   @media (max-width:900px){ .catalog-grid{ grid-template-columns:repeat(2,1fr); } }
   @media (max-width:600px){ .catalog-grid{ grid-template-columns:1fr; } }
 
+  /* Estilo individual de cada tarjeta */
   .card{
     position:relative;
     background:var(--glass-fill);
@@ -346,6 +484,7 @@
     isolation:isolate;
     transition:transform .4s cubic-bezier(.22,.9,.35,1.1), box-shadow .4s ease;
   }
+  /* Brillo en hover */
   .card::before{
     content:'';
     position:absolute;
@@ -359,6 +498,8 @@
   }
   .card:hover::before{ opacity:1; }
   .card:hover{ transform:translateY(-8px) scale(1.01); box-shadow:0 20px 36px var(--ring-shadow), inset 0 1px 0 rgba(255,255,255,0.5); }
+  
+  /* Área visual (imagen de la mochila) */
   .card-visual{
     aspect-ratio:1/1;
     background:linear-gradient(150deg, var(--beige), var(--blush));
@@ -378,6 +519,8 @@
     padding:0.3rem 0.7rem;
     border-radius:999px;
   }
+  
+  /* Contenido de la tarjeta (texto, precio) */
   .card-body{ padding:1.5rem 1.5rem 1.8rem; }
   .card-body h4{
     font-family:'Cormorant Garamond', serif;
@@ -422,6 +565,54 @@
   }
   .strip .btn-outline:hover{ background:rgba(216,183,120,0.14); }
 
+  .artesanias-grid{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    gap:1.5rem;
+    margin-top:2.5rem;
+    padding:0 1rem;
+  }
+  .craft-card{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:24px;
+    padding:1.25rem;
+    text-align:left;
+    box-shadow:0 12px 30px rgba(0,0,0,0.08);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .craft-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 18px 36px rgba(0,0,0,0.12);
+  }
+  .craft-image{
+    border-radius:18px;
+    overflow:hidden;
+    margin-bottom:1rem;
+  }
+  .craft-image img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    display:block;
+  }
+  .craft-card h4{
+    margin-bottom:0.65rem;
+    font-size:1.05rem;
+    color:var(--cream);
+  }
+  .craft-card p{
+    color:rgba(247,241,230,0.78);
+    line-height:1.75;
+    font-size:0.95rem;
+  }
+  @media (max-width:980px){
+    .artesanias-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width:680px){
+    .artesanias-grid{ grid-template-columns:1fr; }
+  }
+
   /* ---------- Proceso ---------- */
   .process{
     display:flex;
@@ -449,7 +640,22 @@
     line-height:1.6;
   }
 
-  /* ---------- Galería (bento de fotos, tipo polaroid) ---------- */
+  /* ========================================
+     GALERÍA DE FOTOS (Bento layout - tipo Pinterest)
+     ======================================== 
+     Grilla de 6 columnas con marcos de fotos tipo Polaroid.
+     Cada foto tiene:
+     - Efecto rotación (-3deg / +3deg)
+     - Sombra y borde tipo Polaroid
+     - Pin decorativo en algunas fotos
+     - Efecto hover: sube y se centra
+     
+     Las clases .pf-1, .pf-2... controlan posición y tamaño
+     de cada foto en la grilla (grid-column, grid-row)
+     
+     IMPORTANTE: Cambiar src="fotos/img1.jpg" al nombre real
+     de la foto que tengas en la carpeta /fotos
+  */
   .gallery-wrap{
     display:grid;
     grid-template-columns:repeat(6, 1fr);
@@ -477,6 +683,7 @@
   .photo-frame.rot-r{ transform:rotate(3deg); }
   .photo-frame.rot-l:hover, .photo-frame.rot-r:hover{ transform:rotate(0deg) translateY(-6px) scale(1.02); }
 
+  /* Tamaños de cada foto en la grilla */
   .pf-1{ grid-column:1 / 3; grid-row:1 / 3; }
   .pf-2{ grid-column:3 / 5; grid-row:1 / 2; }
   .pf-3{ grid-column:5 / 7; grid-row:1 / 3; }
@@ -485,12 +692,13 @@
   .pf-6{ grid-column:1 / 3; grid-row:3 / 4; }
   .pf-7{ grid-column:5 / 7; grid-row:3 / 4; }
 
+  /* En móvil, galerías se adaptan a grilla de 2 columnas */
   @media (max-width:760px){
     .gallery-wrap{ grid-template-columns:repeat(2,1fr); grid-auto-rows:140px; }
     .pf-1,.pf-2,.pf-3,.pf-4,.pf-5,.pf-6,.pf-7{ grid-column:auto; grid-row:span 2; }
   }
 
-  /* placeholder look while there's no real photo yet */
+  /* Placeholder mientras la foto no se haya cargado (no-photo) */
   .photo-frame.no-photo{
     display:flex;
     align-items:center;
@@ -517,7 +725,7 @@
   }
   .photo-frame.no-photo .ph-icon{ position:relative; z-index:2; width:34%; opacity:0.55; }
 
-  /* small coquette pin accent on a couple of frames */
+  /* Pin decorativo en algunas fotos (el pequeño círculo) */
   .frame-pin{
     position:absolute;
     top:8px; left:50%;
@@ -529,7 +737,71 @@
     z-index:6;
   }
 
-  /* ---------- Contacto ---------- */
+  /* ========================================
+     SECCIÓN ARTESANÍAS (Banda de color oscuro)
+     ======================================== 
+     background: --ink (color café muy oscuro, casi negro)
+     color: --cream (fondo beige que contrasta)
+     
+     Se usa para destacar una sección diferente
+     Botones aquí son .btn-outline con colores invertidos
+  */
+  .strip{
+    background:var(--ink);
+    color:var(--cream);
+    text-align:center;
+  }
+  .strip .section-head p{ color:rgba(247,241,230,0.75); }
+  .strip .eyebrow{ color:var(--gold-soft); }
+  .strip .btn-outline{
+    border-color:var(--gold-soft);
+    color:var(--cream);
+  }
+  .strip .btn-outline:hover{ background:rgba(216,183,120,0.14); }
+
+  /* ========================================
+     SECCIÓN PROCESO (Pasos para comprar)
+     ======================================== 
+     Tres pasos: Escribir > Confirmar > Recibir
+     display:flex = alineados en fila
+     Se adapta a móvil con flex-wrap
+  */
+  .process{
+    display:flex;
+    justify-content:space-between;
+    gap:2rem;
+    flex-wrap:wrap;
+  }
+  .process-step{
+    flex:1;
+    min-width:200px;
+    text-align:center;
+  }
+  .process-step .glyph{
+    width:64px; height:64px;
+    margin:0 auto 1.2rem;
+  }
+  .process-step h4{
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.35rem;
+    margin-bottom:0.5rem;
+  }
+  .process-step p{
+    font-size:0.9rem;
+    color:var(--ink-soft);
+    line-height:1.6;
+  }
+
+  /* ========================================
+     SECCIÓN CONTACTO
+     ======================================== 
+     Usa el efecto vidrio (.glass)
+     Contiene:
+     - Título "Hablemos"
+     - Descripción
+     - Botón WhatsApp
+     - Detalles de contacto (WhatsApp, Ubicación)
+  */
   .contact{
     background:var(--glass-fill);
     backdrop-filter:blur(20px) saturate(150%);
@@ -559,6 +831,11 @@
   }
   .contact-item .value{ font-size:1.05rem; color:var(--ink); }
 
+  /* ========================================
+     FOOTER (Pie de página)
+     ======================================== 
+     Pequeño, centrado, con año automático
+  */
   footer{
     text-align:center;
     padding:2.4rem 6vw 2.8rem;
@@ -575,7 +852,14 @@
     margin-bottom:0.5rem;
   }
 
-  /* ---------- Floating WhatsApp ---------- */
+  /* ========================================
+     BOTÓN FLOTANTE DE WHATSAPP
+     ======================================== 
+     Aparece en la esquina inferior derecha.
+     Se mueve hacia arriba y abajo (animación float)
+     Tamaño fijo: 58x58px
+     Siempre visible (z-index:60)
+  */
   .wa-float{
     position:fixed;
     bottom:26px; right:26px;
@@ -600,6 +884,13 @@
   }
   .wa-float svg{ width:26px; height:26px; }
 
+  /* ========================================
+     EFECTO REVEAL (Animación de entrada)
+     ======================================== 
+     .reveal = elementos que aparecen al hacer scroll
+     Combinan: opacidad, blur y movimiento
+     Cambias a .reveal.in cuando están visibles
+  */
   .reveal{
     opacity:0;
     filter:blur(10px);
@@ -608,6 +899,7 @@
   }
   .reveal.in{ opacity:1; filter:blur(0); transform:translateY(0) scale(1); }
 
+  /* Accesibilidad: desactiva animaciones si lo prefiere el usuario */
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; animation:none !important; }
     .reveal{ opacity:1; filter:none; transform:none; }
@@ -617,14 +909,42 @@
 </head>
 <body>
 
+<!-- ========================================
+     FONDO ANIMADO (Blobs flotantes)
+     ========================================
+     Los blobs son formas redondas que flotan de fondo.
+     Crean ese efecto suave y moderno al fondo.
+     Puedes quitarlos eliminando todo este div si quieres un fondo sólido.
+-->
 <div class="liquid-field" aria-hidden="true">
   <div class="blob b1"></div>
   <div class="blob b2"></div>
   <div class="blob b3"></div>
 </div>
 
+<!-- ========================================
+     NAVEGACIÓN SUPERIOR (Header / Navbar)
+     ========================================
+     Está FIJA en el top (position:fixed)
+     - Logo "Airis" a la izquierda
+     - Enlaces de navegación a la derecha
+     
+     Enlaces que ves:
+     - Historia: va a #historia
+     - Galería: va a #galeria  
+     - Colección: va a #coleccion
+     - Artesanías: va a #artesanias
+     - Contacto: va a #contacto
+     
+     Para cambiar el color del navbar, modifica:
+     - background en header
+     - color en nav a
+-->
 <header id="siteHeader">
-  <div class="logo">Airis</div>
+  <div class="logo">
+    <img src="fotos/logop.png" alt="Logo Airis" class="site-logo">
+    Airis
+  </div>
   <div class="nav-links">
     <nav>
       <a href="#historia">Historia</a>
@@ -636,11 +956,27 @@
   </div>
 </header>
 
-<!-- ================= HERO ================= -->
+<!-- ========================================
+     SECCIÓN HERO (La portada principal)
+     ========================================
+     Es lo primero que ves al abrir.
+     Ocupa toda la altura de la pantalla.
+     Tiene:
+     - Subtítulo pequeño "Tejido a mano..."
+     - Título grande "Airis"
+     - Descripción
+     - 2 botones: WhatsApp y Ver colección
+     - Elemento visual (anillos)
+     
+     Para PERSONALIZAR:
+     - <h1>Airis</h1> = Cambiar el título
+     - <p class="sub">...</p> = Cambiar descripción
+     - href en botones = cambiar enlaces
+-->
 <section class="hero">
   <span class="hero-eyebrow">Tejido a mano · Edición limitada</span>
   <h1>Airis</h1>
-  <p class="sub">Mochilas y artesanías tejidas a mano, hilo por hilo, por una madre y su abuela. Piezas únicas, hechas para durar y para acompañar.</p>
+  <p class="sub">Mochilas y artesanías tejidas a mano, hilo por hilo, por una abuela y su nieta. Piezas únicas, hechas para durar y para acompañar.</p>
   <div class="cta-row">
     <a class="btn btn-primary" href="https://wa.me/573005563452?text=Hola%20Airis%2C%20quiero%20conocer%20m%C3%A1s%20sobre%20las%20mochilas%20tejidas" target="_blank" rel="noopener">
       Escribir por WhatsApp
@@ -651,38 +987,63 @@
   <div class="hero-ring" id="heroRing"></div>
 </section>
 
-<!-- ================= HISTORIA ================= -->
+<!-- ========================================
+     SECCIÓN HISTORIA
+     ========================================
+     Cuenta tu historia con una imagen a la izquierda
+     y texto a la derecha.
+     
+     - .story-visual = Lado izquierdo (foto/imagen)
+     - .story-text = Lado derecho (el texto)
+     
+     En móvil se apilan (arriba la imagen, abajo texto)
+     
+     PERSONALIZAR:
+     - <h3>Dos generaciones...</h3> = Título
+     - <p>...</p> = Párrafos de texto
+     - <p class="quote">...</p> = La frase destacada
+-->
 <section id="historia">
   <div class="story reveal">
     <div class="story-visual">
-      <div id="storySvg"></div>
-      <span class="placeholder-tag">Foto próximamente</span>
+      <img src="fotos/imgpp.png" alt="Mochila tejida Airis">
+     <div id="storySvg"></div> 
     </div>
     <div class="story-text">
       <span class="eyebrow">Nuestra historia</span>
       <h3>Dos generaciones, un mismo hilo</h3>
-      <p>Airis nace en casa, entre agujas, carretes de hilo y tardes de tejido compartidas entre una abuela y su nieta política. Lo que empezó como una tradición familiar hoy se convierte en mochilas y piezas artesanales para quienes valoran lo hecho a mano.</p>
+      <p>Airis nace en casa, entre agujas, carretes de hilo y tardes de tejido compartidas entre una abuela y su nieta. Lo que empezó como una tradición familiar hoy se convierte en mochilas y piezas artesanales para quienes valoran lo hecho a mano.</p>
       <p>Cada mochila lleva horas de trabajo detallado: nudo por nudo, sin prisa, cuidando el acabado y la caída del hilo. No hay dos piezas exactamente iguales.</p>
       <p class="quote">"Tejemos con las manos lo que queremos que dure en el tiempo."</p>
     </div>
   </div>
 </section>
 
-<!-- ================= GALERIA ================= -->
-<!--
-  ==============================================================
-   ZONA DE FOTOS — GALERÍA "MOMENTOS AIRIS"
-  ==============================================================
-  Cada <img> de abajo tiene un src="fotos/nombre-de-archivo.jpg"
-  que todavía NO existe. Mientras no exista, el marco muestra un
-  placeholder bonito automáticamente (no se ve roto).
-
-  Para activar una foto real:
-   1. Crea una carpeta "fotos" al lado de este archivo .html
-   2. Guarda ahí la foto con el mismo nombre que dice el src
-      (ej: fotos/mochila-champagne-1.jpg)
-   3. Listo, se reemplaza sola y el marco deja de mostrar el placeholder
-  ==============================================================
+<!-- ========================================
+     SECCIÓN GALERÍA (7 fotos en layout Bento)
+     ========================================
+     Muestra fotos de tus productos en un layout tipo Pinterest.
+     
+     CÓMO AGREGAR FOTOS:
+     1. Crea carpeta "fotos" en el mismo nivel que index.html
+     2. Guarda tus fotos con nombres como:
+        - fotos/img1.jpg
+        - fotos/img2.jpg
+        - etc.
+     3. El HTML ya tiene src="fotos/img1.jpg", etc.
+     4. Al cargar, si encuentra la foto, la muestra
+        Si NO encuentra la foto, muestra un placeholder bonito
+     
+     Las fotos se ven con un efecto Polaroid:
+     - Borde blanco grueso
+     - Ligera rotación (-3° o +3°)
+     - Sombra suave
+     - Al pasar mouse, se centra y sube
+     
+     PERSONALIZAR:
+     - Cambiar src="fotos/img1.jpg" al nombre de TU foto
+     - Cambiar alt="..." para descripción
+     - El PIN (círculo pequeño) aparece si quieres decoración
 -->
 <section id="galeria">
   <div class="section-head reveal">
@@ -755,7 +1116,31 @@
   </div>
 </section>
 
-<!-- ================= COLECCION ================= -->
+<!-- ========================================
+     SECCIÓN COLECCIÓN (Productos principales)
+     ========================================
+     Muestra las 3 mochilas principales en tarjetas.
+     
+     Estructura de cada tarjeta (.card):
+     - .card-visual = Imagen/ilustración de la mochila
+       - .tag = Etiqueta (Champagne, Cordón de seda, Cola de ratón)
+       - .bag-svg = SVG que dibuja la mochila
+     - .card-body = Contenido (nombre, descripción, precio, botón)
+       - <h4> = Nombre de la mochila
+       - <p> = Descripción
+       - .price = "Consultar precio"
+       - .card-link = Botón para pedir por WhatsApp
+     
+     PERSONALIZAR TARJETAS:
+     1. Cambiar <h4>Mochila Champagne</h4> = nombre del producto
+     2. Cambiar <p>Hilo sedoso...</p> = descripción
+     3. Cambiar data-tone="champagne" = color
+        Opciones: "champagne", "gold", "brown"
+     4. Cambiar enlace WhatsApp en href
+     
+     Las mochlas se dibujan automáticamente con SVG
+     según el data-tone que hayas puesto
+-->
 <section id="coleccion">
   <div class="section-head reveal">
     <span class="eyebrow">Colección</span>
@@ -764,6 +1149,7 @@
   </div>
   <div class="catalog-grid reveal">
 
+    <!-- TARJETA 1: Mochila Champagne -->
     <div class="card">
       <div class="card-visual"><span class="tag">Champagne</span><div class="bag-svg" data-tone="champagne"></div></div>
       <div class="card-body">
@@ -774,6 +1160,7 @@
       </div>
     </div>
 
+    <!-- TARJETA 2: Mochila Cordón de Seda (Dorada) -->
     <div class="card">
       <div class="card-visual"><span class="tag">Cordón de seda</span><div class="bag-svg" data-tone="gold"></div></div>
       <div class="card-body">
@@ -784,6 +1171,7 @@
       </div>
     </div>
 
+    <!-- TARJETA 3: Mochila Hilo Cola de Ratón (Marrón) -->
     <div class="card">
       <div class="card-visual"><span class="tag">Cola de ratón</span><div class="bag-svg" data-tone="brown"></div></div>
       <div class="card-body">
@@ -797,35 +1185,104 @@
   </div>
 </section>
 
-<!-- ================= ARTESANIAS ================= -->
+<!-- ========================================
+     SECCIÓN ARTESANÍAS (Banda oscura)
+     ========================================
+     Sección destacada (fondo oscuro --ink)
+     Texto en color claro (--cream)
+     
+     Se usa para ofrecer servicios adicionales:
+     - Llaveros
+     - Monederos
+     - Individuales
+     - Encargos personalizados
+     
+     El botón aquí usa .btn-outline con colores invertidos
+     (borde dorado, texto claro)
+     
+     PERSONALIZAR:
+     - Cambiar <h2> = título
+     - Cambiar <p> = descripción
+     - Cambiar href en botón = enlace WhatsApp
+-->
 <section id="artesanias" class="strip">
   <div class="section-head reveal">
     <span class="eyebrow">También tejemos</span>
     <h2>Artesanías hechas a mano</h2>
     <p>Además de las mochilas, hacemos piezas artesanales por encargo: llaveros, monederos, individuales y detalles decorativos en el mismo hilo y paleta de la colección.</p>
-    <div style="margin-top:2.2rem;">
+  </div>
+
+  <div class="artesanias-grid reveal">
+    <article class="craft-card">
+      <div class="craft-image"><img src="fotos/llaveros.jpg" alt="Llaveros artesanales"></div>
+      <h4>Llaveros</h4>
+      <p>Accesorios pequeños en hilo natural, perfectos para acompañar tus llaves o bolsos.</p>
+    </article>
+    <article class="craft-card">
+      <div class="craft-image"><img src="fotos/monederos.jpg" alt="Monederos artesanales"></div>
+      <h4>Monederos</h4>
+      <p>Pequeños monederos tejidos con la misma paleta y textura suave de la colección.</p>
+    </article>
+    <article class="craft-card">
+      <div class="craft-image"><img src="fotos/individuales.jpg" alt="Individuales artesanales"></div>
+      <h4>Individuales</h4>
+      <p>Tapetes individuales a medida para la mesa, con detalles elegantes y resistencias artesanales.</p>
+    </article>
+    <article class="craft-card">
+      <div class="craft-image"><img src="fotos/detalles-decorativos.jpg" alt="Detalles decorativos artesanales"></div>
+      <h4>Detalles decorativos</h4>
+      <p>Piezas decorativas en la misma gama de colores para complementar cualquier espacio.</p>
+    </article>
+  </div>
+
+  <div class="section-head" style="margin-top:2.2rem;">
       <a class="btn btn-outline" href="https://wa.me/573005563452?text=Hola%2C%20quiero%20preguntar%20por%20artesan%C3%ADas%20personalizadas" target="_blank" rel="noopener">Preguntar por un encargo</a>
-    </div>
   </div>
 </section>
 
-<!-- ================= PROCESO ================= -->
+<!-- ========================================
+     SECCIÓN PROCESO (Pasos de compra)
+     ========================================
+     Muestra los 3 pasos para hacer un pedido:
+     1. Escribir por WhatsApp
+     2. Confirmación de detalles
+     3. Recibir la pieza
+     
+     Cada paso tiene:
+     - .glyph = Icono SVG (se dibuja automáticamente)
+     - <h4> = Título del paso
+     - <p> = Descripción
+     
+     Los iconos se generan en JavaScript con
+     data-glyph="1", data-glyph="2", etc.
+     
+     PERSONALIZAR:
+     - Cambiar <h4> = título del paso
+     - Cambiar <p> = descripción del paso
+     - Los iconos se dibujan solos, no editables fácilmente
+-->
 <section>
   <div class="section-head reveal">
     <span class="eyebrow">Cómo comprar</span>
     <h2>Un pedido, tres pasos</h2>
   </div>
   <div class="process reveal">
+    <!-- Paso 1: Escribir -->
+    <!-- Paso 1: Escribir -->
     <div class="process-step">
       <div class="glyph" data-glyph="1"></div>
       <h4>Escríbenos</h4>
       <p>Cuéntanos qué mochila o pieza te gustó por WhatsApp.</p>
     </div>
+    
+    <!-- Paso 2: Confirmación -->
     <div class="process-step">
       <div class="glyph" data-glyph="2"></div>
       <h4>Confirmamos</h4>
       <p>Te confirmamos color, tiempo de entrega y forma de envío.</p>
     </div>
+    
+    <!-- Paso 3: Entrega -->
     <div class="process-step">
       <div class="glyph" data-glyph="3"></div>
       <h4>Recibes tu pieza</h4>
@@ -834,7 +1291,31 @@
   </div>
 </section>
 
-<!-- ================= CONTACTO ================= -->
+<!-- ========================================
+     SECCIÓN CONTACTO
+     ========================================
+     Sección final para que los clientes se comuniquen.
+     Usa el efecto vidrio (.contact)
+     
+     Contiene:
+     - Título "Hablemos"
+     - Descripción
+     - Botón principal de WhatsApp
+     - Detalles de contacto:
+       * WhatsApp: número de teléfono
+       * Ubicación: país/región
+     
+     PERSONALIZAR:
+     - Cambiar número de WhatsApp en href
+       De: https://wa.me/573005563452
+       A: https://wa.me/[TU NÚMERO]
+     - Cambiar número de teléfono en .value
+       De: 300 556 3452
+       A: [TU NÚMERO]
+     - Cambiar ubicación
+       De: Colombia · envíos a nivel nacional
+       A: [TU UBICACIÓN]
+-->
 <section id="contacto">
   <div class="contact reveal">
     <h2>Hablemos</h2>
@@ -853,11 +1334,37 @@
   </div>
 </section>
 
+<!-- ========================================
+     FOOTER (Pie de página)
+     ========================================
+     Pequeña sección al final con:
+     - Logo "Airis"
+     - Copyright con año automático
+     
+     El año se actualiza automáticamente gracias a JavaScript:
+     document.getElementById('year').textContent = new Date().getFullYear();
+     
+     PERSONALIZAR:
+     - Cambiar <span class="logo-foot">Airis</span> = tu nombre
+     - El texto "Tejido a mano · Piezas únicas" = tu eslogan
+-->
 <footer>
   <span class="logo-foot">Airis</span>
   Tejido a mano · Piezas únicas · © <span id="year"></span>
 </footer>
 
+<!-- ========================================
+     BOTÓN FLOTANTE DE WHATSAPP
+     ========================================
+     Círculo dorado en la esquina inferior derecha.
+     Siempre visible, se mueve hacia arriba y abajo.
+     Al hacer clic, abre WhatsApp.
+     
+     PERSONALIZAR:
+     - Cambiar href="https://wa.me/573005563452"
+       A: https://wa.me/[TU NÚMERO]
+     - Para DESACTIVAR: elimina todo este <a></a>
+-->
 <a class="wa-float" href="https://wa.me/573005563452?text=Hola%20Airis" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
   <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M16.001 3C9.107 3 3.5 8.607 3.5 15.5c0 2.29.62 4.44 1.7 6.29L3 29l7.4-2.14a12.42 12.42 0 0 0 5.6 1.34h.001C22.895 28.2 28.5 22.593 28.5 15.7 28.5 8.807 22.895 3 16.001 3z" fill="#F7F1E6"/>
@@ -865,6 +1372,19 @@
   </svg>
 </a>
 
+<!-- ========================================
+     JAVASCRIPT - Lógica de la página
+     ========================================
+     Aquí va todo el código interactivo:
+     - Generador de anillos (hero-ring)
+     - Dibujos de mochilas (bag-svg)
+     - Iconos del proceso (glyph)
+     - Detectar scroll para activar animaciones
+     - Efecto de brillo en hover
+     
+     No es recomendable cambiar esto a menos que
+     entiendas JavaScript bien.
+-->
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
 
